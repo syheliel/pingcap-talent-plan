@@ -1,45 +1,48 @@
 extern crate clap;
-
-
+extern crate structopt;
 use std::process::exit;
 
-use clap::{App, Arg, SubCommand, crate_authors, crate_name, crate_version};
+use clap::{crate_authors, crate_name, crate_version, App, Arg, SubCommand};
+use structopt::StructOpt;
+#[derive(Debug, StructOpt)]
+#[structopt(name = "git", about = "the stupid content tracker")]
+enum Opts {
+    #[structopt(name = "set")]
+    Add {
+        #[structopt()]
+        key: String,
+        #[structopt()]
+        value: String,
+    },
+    #[structopt(name = "get")]
+    Fetch {
+        #[structopt()]
+        key: String,
+    },
+    #[structopt(name = "rm")]
+    Commit {
+        #[structopt()]
+        key: String,
+    },
+}
+
 fn main() {
-    let matches = App::new(crate_name!())
-    .author(crate_authors!())
-        .version(crate_version!())
-        .subcommand(
-            SubCommand::with_name("set")
-            .args(
-                &[Arg::with_name("KEY").required(true),
-                Arg::with_name("VALUE").required(true)]
-            )
-        )
-    .subcommand(
-        SubCommand::with_name("get")
-        .arg(Arg::with_name("KEY").required(true))
-    )
-    .subcommand(
-        SubCommand::with_name("rm")
-        .arg(Arg::with_name("KEY").required(true))
-    )
-    .get_matches();
-
-    match matches.subcommand(){
-        ("set",Some(_matches)) => {
+    let opts = Opts::from_args();
+    match opts {
+        Opts::Add { key, value } => {
             eprintln!("unimplemented");
-            exit(1);
+            exit(1)
         }
-        ("get",Some(_matches)) => {
+        Opts::Fetch { key } => {
             eprintln!("unimplemented");
-            exit(1);
+            exit(1)
         }
-        ("rm",Some(_matches)) => {
+        Opts::Commit { key } => {
             eprintln!("unimplemented");
-            exit(1);
+            exit(1)
         }
-        _ => unreachable!()
+        _ => {
+            unreachable!()
+        }
     }
-
-
 }
