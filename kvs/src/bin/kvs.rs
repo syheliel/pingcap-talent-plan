@@ -1,6 +1,8 @@
 extern crate clap;
 
 
+use std::process::exit;
+
 use clap::{App, Arg, SubCommand, crate_authors, crate_name, crate_version};
 fn main() {
     let matches = App::new(crate_name!())
@@ -23,22 +25,21 @@ fn main() {
     )
     .get_matches();
 
-    if let Some(matches) = matches.subcommand_matches("set"){
-        let key = matches.value_of("KEY").unwrap();
-        let value = matches.value_of("VALUE").unwrap();
-        eprintln!("unimplemented");
+    match matches.subcommand(){
+        ("set",Some(_matches)) => {
+            eprintln!("unimplemented");
+            exit(1);
+        }
+        ("get",Some(_matches)) => {
+            eprintln!("unimplemented");
+            exit(1);
+        }
+        ("rm",Some(_matches)) => {
+            eprintln!("unimplemented");
+            exit(1);
+        }
+        _ => unreachable!()
     }
 
-    if let Some(matches) = matches.subcommand_matches("get"){
-        let key = matches.value_of("KEY").unwrap();
-        eprintln!("unimplemented");
-    }
-
-    if let Some(matches) = matches.subcommand_matches("rm"){
-        let key = matches.value_of("KEY").unwrap();
-        eprintln!("unimplemented");
-    }
-
-    
 
 }
