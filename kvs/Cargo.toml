@@ -10,7 +10,11 @@ edition = "2018"
 [dependencies]
 clap = "2.33.3"
 structopt = "0.3.22"
+failure = "0.1.8"
+serde = {version = "1.0.126", features = ["derive"]}
 
 [dev-dependencies]
 assert_cmd = "1.0.7"
 predicates = "2.0.0"
+tempfile = "3.0.7"
+walkdir = "2.2.7"
