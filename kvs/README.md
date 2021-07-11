@@ -140,7 +140,7 @@ TODO
 -->
 
 
-## Part 2: How the log behaves
+## Part 2: How the log behaves(Done)
 
 Now we are finally going to begin implementing the beginnings of a real database
 by reading and writing from disk. You will use [`serde`] to serialize the "set"
