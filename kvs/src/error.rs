@@ -1,6 +1,7 @@
 // this part is from github
 use failure::Fail;
 use std::io;
+use std::string::FromUtf8Error;
 
 /// Error type for kvs.
 #[derive(Fail, Debug)]
@@ -12,6 +13,9 @@ pub enum KvsError {
     #[fail(display = "{}", _0)]
     Serde(#[cause] serde_json::Error),
     /// Removing non-existent key error.
+    #[fail(display = "{}", _0)]
+    ByteToStrError(#[cause] FromUtf8Error),
+    /// Conversing Vec<u8> to str error.
     #[fail(display = "Key not found")]
     KeyNotFound,
     /// Unexpected command type error.
@@ -29,6 +33,12 @@ impl From<io::Error> for KvsError {
 impl From<serde_json::Error> for KvsError {
     fn from(err: serde_json::Error) -> KvsError {
         KvsError::Serde(err)
+    }
+}
+
+impl From<FromUtf8Error> for KvsError {
+    fn from(err: FromUtf8Error) -> KvsError {
+        KvsError::ByteToStrError(err)
     }
 }
 

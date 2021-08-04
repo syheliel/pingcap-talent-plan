@@ -1,4 +1,9 @@
 task website: https://github.com/pingcap/talent-plan/tree/master/courses/rust/projects/project-2#user-content-project-spec
+
+1. KvStore: 记录日志的位置(file_path)以及末尾位置(next_pos)，同时在内存中维护日志指针表(pointer_map)
+2. 日志格式("task2.log")：利用serde将Command类序列化，以换行符作为间隔分割
+3. 日志指针(Pointer)：记录每个key对应日志在日志文件中的起始点(pos)以及序列化后的长度(len)
+
 # PNA Rust Project 2: Log-structured file I/O
 
 **Task**: Create a _persistent_ key/value store that _can be accessed from the
@@ -190,7 +195,7 @@ thus never read from the log after initial startup and log replay). In a future
 iteration you will store only "log pointers" (file offsets) into the log.
 
 
-## Part 3: Writing to the log
+## Part 3: Writing to the log(Done)
 
 You will start by implementing the "set" flow. There are a number of steps here.
 Most of them are straightforward to implement and you can verify you've done so
@@ -226,7 +231,7 @@ command. It may help to keep both in mind, or to implement them both
 simultaneously. It is your choice.
 
 
-## Part 4: Reading from the log
+## Part 4: Reading from the log(Done)
 
 Now it's time to implement "get". In this part, you don't need to store
 log pointers in the index, we will leave the work to the next part. Instead,
@@ -257,7 +262,7 @@ additional information to distinguish the length of each record. Maybe not.
 _Implement "get" now_.
 
 
-## Part 5: Storing log pointers in the index
+## Part 5: Storing log pointers in the index(Done)
 
 At this point most, if not all (besides the compaction test), other test suite should all pass. The changes
 introduced in the next steps are simple optimizations, necessary for fast
