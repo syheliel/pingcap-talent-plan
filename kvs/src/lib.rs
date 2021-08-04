@@ -8,9 +8,10 @@ use std::{ io::{Read, Write}, path::PathBuf};
 //pub type Result<T> = std::result::Result<T, Error>;
 use serde::{Serialize, Deserialize};
 use std::fs::{OpenOptions};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::io::{SeekFrom, Seek};
 
+const COMPACTION_THRESHOLD: u64 = 1024 * 1024;
 #[derive(Serialize, Deserialize, Debug)]
 enum Command{
     Set{key:String,value:String},
@@ -29,6 +30,7 @@ pub struct KvStore {
     next_pos:usize //record position for next command
 }
 
+
 impl KvStore {
 
     /// kvStore[key] -> value
@@ -40,7 +42,9 @@ impl KvStore {
         let pointer = Pointer{pos:self.next_pos,len:command_len};
         self.next_pos += pointer.len + 1; // 加上当前序列化内容的长度 + 分隔符长度
         self.pointer_map.insert(key,pointer);
-
+        if self.next_pos > COMPACTION_THRESHOLD as usize {
+            self.compact();
+        }
         Ok(())
     }
 
@@ -85,7 +89,8 @@ impl KvStore {
             pointer_map:HashMap::new(),
             next_pos:0
         };
-        kv_store.rebuild_map()?;
+        kv_store.compact()?;
+        // kv_store.rebuild_map()?;
         Ok(kv_store)
 
     }
@@ -147,6 +152,41 @@ impl KvStore {
                }
            }
         }
+        Ok(())
+    }
+
+    /// compact log and then rebuild pointer_map
+    fn compact(&mut self) -> Result<()>{
+        let mut commands = self.get_all_command();
+        commands.reverse();
+        let mut key_set = HashSet::new();
+        // 倒序遍历commands，找到对于某个key最后出现的command
+        let mut valid_commands = Vec::new();
+        for command in &commands{
+            match command{
+                Command::Set {key,..} => {
+                    if !key_set.contains(key) {
+                        valid_commands.push(command);
+                        key_set.insert(key);
+                    }
+                }
+                Command::Rm {key} => {
+                    if !key_set.contains(key) {
+                        valid_commands.push(command);
+                        key_set.insert(key);
+                    }
+                }
+            }
+        }
+
+        self.next_pos = 0;
+        std::fs::remove_file(&self.file_path)?;
+        std::fs::File::create(&self.file_path)?;
+        valid_commands.reverse();
+        for command in valid_commands{
+            self.append_command(command)?;
+        }
+        self.rebuild_map()?;
         Ok(())
     }
 }

@@ -3,6 +3,7 @@ task website: https://github.com/pingcap/talent-plan/tree/master/courses/rust/pr
 1. KvStore: 记录日志的位置(file_path)以及末尾位置(next_pos)，同时在内存中维护日志指针表(pointer_map)
 2. 日志格式("task2.log")：利用serde将Command类序列化，以换行符作为间隔分割
 3. 日志指针(Pointer)：记录每个key对应日志在日志文件中的起始点(pos)以及序列化后的长度(len)
+4. 日志压缩(KvStore.compact):读入所有command，从后往前选取有效command后重新写入文件并重构索引;触发点：(1)每次调用KvStore::open() (2) set后next_pos大于阈值
 
 # PNA Rust Project 2: Log-structured file I/O
 
