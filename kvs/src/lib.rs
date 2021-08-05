@@ -1,9 +1,14 @@
 //#![deny(missing_docs)]
 extern crate failure;
 extern crate serde;
+mod error;
+mod client;
+mod engines;
+
+pub use client::KvsClient;
+pub use engines::KvsEngine;
 pub use error::{KvsError, Result};
 
-mod error;
 use std::{ io::{Read, Write}, path::PathBuf};
 //pub type Result<T> = std::result::Result<T, Error>;
 use serde::{Serialize, Deserialize};
